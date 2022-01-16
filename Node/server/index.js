@@ -2,7 +2,7 @@
 const crypto = require('crypto');
 const tls = require("tls");
 const fs = require("fs");
-const serverPort = 9000;
+const serverPort = 3000;
 
 let DB_USERS = JSON.parse(fs.readFileSync('server/db.json'));
 
@@ -16,9 +16,7 @@ const options = {
     "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384",
 };
 
-const activeSessions = {
-
-};
+const activeSessions = {};
 
 const serverSocket = tls.createServer(options, (clientSocket) => {
   if(!clientSocket.authorized){
