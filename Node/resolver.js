@@ -5,5 +5,5 @@ resolver.setServers(['127.0.0.1:9000']);
 // Alternatively, the same code can be written using async-await style.
 (async function() {
   const addresses = await resolver.resolve4('gei761.cool.');
-  console.log("Found these addresses :" , addresses[0]);
+  console.log("Found these addresses :" , addresses);
 })();

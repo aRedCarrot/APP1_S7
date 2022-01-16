@@ -15,10 +15,10 @@ const zoneName = "gei761.cool.";
   console.log(`Connecting to ${hostname}`);
   const serverPort = 3000;
   const options = {
+    passphrase: "1234",
     host: hostname === "127.0.0.1" ? 'localhost' : hostname,
     port: serverPort,
     key: fs.readFileSync("client/ssl/private_client_key.pem"),
-    passphrase: "1234",
     cert: fs.readFileSync("client/ssl/cert_signed_client.pem"),
     ca: fs.readFileSync("certificat/autorite.pem"),
     ciphers: "HIGH",
