@@ -1,5 +1,6 @@
 "use strict";
 const crypto = require('crypto');
+const bcrypt = require ('bcrypt');
 const tls = require("tls");
 const fs = require("fs");
 const serverPort = 3000;
@@ -61,33 +62,30 @@ const handleSignup = (username,password,clientSocket) => {
   if(username in DB_USERS){
     clientSocket.write("SIGNUP_BAD");
   } else {
-    const salt = crypto.randomBytes(15).toString('hex');
-    const hashFunction = crypto.createHmac("sha512",salt);
-    hashFunction.update(password);
-    const digest = hashFunction.digest("hex");
-    // Store the password in the database
-    DB_USERS[username] = { digest, salt };
-    fs.writeFileSync('server/db.json',JSON.stringify(DB_USERS));
-    clientSocket.write("SIGNUP_OK");
-    console.log(`Authorized user ${username} signed up`);
+    bcrypt.genSalt(10, function(_, salt) {
+      bcrypt.hash(password, salt, function(_, digest) {
+        DB_USERS[username] = { digest, salt };
+        fs.writeFileSync('server/db.json',JSON.stringify(DB_USERS));
+        clientSocket.write("SIGNUP_OK");
+        console.log(`Authorized user ${username} signed up`);
+      });
+    });
   }
 }
 
 const handleLogin = (username,password,clientSocket) => {
   if(username in DB_USERS){
-    const { salt, digest : storedDigest } = DB_USERS[username];
-    const hashFunction = crypto.createHmac("sha512",salt);
-    hashFunction.update(password);
-    const digest = hashFunction.digest("hex");
-    if(storedDigest === digest){
-      // We use the salt as the sessionId
-      const sessionId = crypto.randomBytes(15).toString('hex');
-      activeSessions[username] = sessionId;
-      clientSocket.write(`LOGIN_OK:${username}:${sessionId}`);
-      console.log(`Authenticated user ${username} logged in`);
-    } else {
-      clientSocket.write("LOGIN_BAD");
-    }
+    const { digest : storedDigest } = DB_USERS[username];
+    bcrypt.compare(password, storedDigest, function(_, isEqual) {
+      if(isEqual){
+        const sessionId = crypto.randomBytes(15).toString('hex');
+        activeSessions[username] = sessionId;
+        clientSocket.write(`LOGIN_OK:${username}:${sessionId}`);
+        console.log(`Authenticated user ${username} logged in`);
+      } else {
+        clientSocket.write("LOGIN_BAD");
+      }
+    });
   } else {
     clientSocket.write("LOGIN_BAD");
   }
