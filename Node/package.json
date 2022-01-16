@@ -1,0 +1,17 @@
+{
+  "name": "https-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^12.0.3",
+    "prompt-sync": "^4.2.0",
+    "sha1": "^1.1.1"
+  }
+}
