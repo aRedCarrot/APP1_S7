@@ -8,7 +8,6 @@ const serverPort = 3000;
 let DB_USERS = JSON.parse(fs.readFileSync("server/db.json"));
 
 const options = {
-  passphrase: "1234",
   key: fs.readFileSync("server/ssl/private_server_key.pem"),
   cert: fs.readFileSync("server/ssl/cert_signed_server.pem"),
   ca: fs.readFileSync("certificat/autorite.pem"),
@@ -28,7 +27,6 @@ const serverSocket = tls.createServer(options, (clientSocket) => {
   console.log(`Authorized client connected`);
   clientSocket.setEncoding("utf8");
   clientSocket.on("data", (data) => {
-    console.log(data);
     handleMessage(data, clientSocket);
   });
 
